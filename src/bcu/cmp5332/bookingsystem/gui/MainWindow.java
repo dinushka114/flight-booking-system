@@ -2,6 +2,7 @@ package bcu.cmp5332.bookingsystem.gui;
 
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
@@ -34,6 +35,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem flightsAdd;
     private JMenuItem flightsDel;
     
+    private JMenuItem bookingsView;
     private JMenuItem bookingsIssue;
     private JMenuItem bookingsUpdate;
     private JMenuItem bookingsCancel;
@@ -96,9 +98,12 @@ public class MainWindow extends JFrame implements ActionListener {
         // adding Bookings menu and menu items
         bookingsMenu = new JMenu("Bookings");
         
+        bookingsView = new JMenuItem("View");
         bookingsIssue = new JMenuItem("Issue");
         bookingsUpdate = new JMenuItem("Update");
         bookingsCancel = new JMenuItem("Cancel");
+        
+        bookingsMenu.add(bookingsView);
         bookingsMenu.add(bookingsIssue);
         bookingsMenu.add(bookingsUpdate);
         bookingsMenu.add(bookingsCancel);
@@ -176,6 +181,8 @@ public class MainWindow extends JFrame implements ActionListener {
         } else if (ae.getSource() == custDel) {
             
             
+        }else if(ae.getSource() ==bookingsView){
+        	displayBookings();
         }
     }
     
@@ -218,4 +225,24 @@ public class MainWindow extends JFrame implements ActionListener {
         this.getContentPane().add(new JScrollPane(table));
         this.revalidate();
     }	
+    
+    public void displayBookings() {
+    	List<Booking> bookingList = fbs.getBookings();
+    	String[] columns = new String[] {"Customer Name" , "Flight Id" , "Departure Date"};
+    	
+    	Object[][] data = new Object[bookingList.size()][6];
+    	 System.out.println(bookingList.size());
+        for (int i = 0; i < bookingList.size(); i++) {
+            Booking book = bookingList.get(i);
+            data[i][0] = book.getCustomer().getName();
+            data[i][1] = book.getFlight().getFlightNumber();
+            data[i][2] = book.getBookingDate();
+           
+        }
+
+        JTable table = new JTable(data, columns);
+        this.getContentPane().removeAll();
+        this.getContentPane().add(new JScrollPane(table));
+        this.revalidate();
+    }
 }
