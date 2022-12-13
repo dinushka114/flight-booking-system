@@ -10,14 +10,14 @@ import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
-public class RemoveCustomer implements Command, DataManager  {
+public class RemoveFlight implements Command, DataManager{
 	
+public final String RESOURCE = "./resources/data/flights.txt";
 	
-	public final String RESOURCE = "./resources/data/customers.txt";
-	
-	public RemoveCustomer(FlightBookingSystem fbs , int row) throws IOException {
-		deleteCustomer(fbs , row);
+	public RemoveFlight(FlightBookingSystem fbs , int row) throws IOException {
+		deleteFlight(fbs , row);
 	}
+
 
 	@Override
 	public void loadData(FlightBookingSystem fbs) throws IOException, FlightBookingSystemException {
@@ -33,22 +33,23 @@ public class RemoveCustomer implements Command, DataManager  {
 
 	@Override
 	public void execute(FlightBookingSystem flightBookingSystem) throws FlightBookingSystemException {
-
+		// TODO Auto-generated method stub
 		
 	}
 	
-	public void deleteCustomer(FlightBookingSystem flightBookingSystem , int id) throws IOException {
+	public void deleteFlight(FlightBookingSystem fbs , int id) throws IOException {
 		try (PrintWriter out = new PrintWriter(new FileWriter(RESOURCE))) {
 			int temp_id = 1;
-            for (Customer customer : flightBookingSystem.deleteCustomer(id)) {
+            for (Flight flight: fbs.deleteFlight(id)) {
                 out.print(temp_id + SEPARATOR);
-                out.print(customer.getName() + SEPARATOR);
-                out.print(customer.getPhone() + SEPARATOR);
+                out.print(flight.getFlightNumber() + SEPARATOR);
+                out.print(flight.getOrigin() + SEPARATOR);
+                out.print(flight.getDestination() + SEPARATOR);
+                out.print(flight.getDepartureDate() + SEPARATOR);
                 out.println();
                 temp_id+=1;
             }
         }
-
 	}
-	
+
 }

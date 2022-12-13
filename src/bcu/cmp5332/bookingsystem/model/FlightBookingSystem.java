@@ -92,9 +92,20 @@ public class FlightBookingSystem {
 			}
 		}
 		
-		
-		
+	
 		return newCustomers;
+	}
+	
+	
+	public ArrayList<Flight> deleteFlight(int row) {
+		ArrayList<Flight> newFlights = new ArrayList<Flight>();
+		for(int i = 1 ; i <= flights.size() ; i ++) {
+			if(row!=i) {
+				newFlights.add(flights.get(i));
+			}
+		}
 		
+	
+		return newFlights;
 	}
 }

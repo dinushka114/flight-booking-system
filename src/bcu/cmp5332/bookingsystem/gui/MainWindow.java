@@ -2,6 +2,7 @@ package bcu.cmp5332.bookingsystem.gui;
 
 import bcu.cmp5332.bookingsystem.commands.Command;
 import bcu.cmp5332.bookingsystem.commands.RemoveCustomer;
+import bcu.cmp5332.bookingsystem.commands.RemoveFlight;
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
@@ -175,6 +176,12 @@ public class MainWindow extends JFrame implements ActionListener {
             new AddFlightWindow(this);
             
         } else if (ae.getSource() == flightsDel) {
+        	try {
+        		deleteSelectedFlight(deleteSelectRow + 1);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             
             
         } else if (ae.getSource() == bookingsIssue) {
@@ -203,16 +210,22 @@ public class MainWindow extends JFrame implements ActionListener {
     }
     
     public void deleteSelectedCustomer(int row) throws IOException {
-    	System.out.println(row);
-    	Command removeCustomer = new RemoveCustomer(fbs , row);
-    	displayCustomers();
-//    	try {
-//    		Command removeCustomer = new RemoveCustomer(fbs , row);
-////    		displayCustomers();
-//    	}catch(Exception e) {
-//    		JOptionPane.showMessageDialog(null, "Something went wrong" , "Error", JOptionPane.WARNING_MESSAGE);
-//    	}
-//    	
+    	try {
+    		Command removeCustomer = new RemoveCustomer(fbs , row);
+    		displayCustomers();
+    	}catch(Exception e) {
+    		JOptionPane.showMessageDialog(null, "Something went wrong" , "Error", JOptionPane.WARNING_MESSAGE);
+    	}
+    	
+    }
+    
+    public void deleteSelectedFlight(int row) throws IOException {
+    	try {
+    		Command removeFlight = new RemoveFlight(fbs , row);
+    		displayCustomers();
+    	}catch(Exception e) {
+    		JOptionPane.showMessageDialog(null, "Something went wrong" , "Error", JOptionPane.WARNING_MESSAGE);
+    	}
     }
     
     public void displayCustomers() {
@@ -265,7 +278,7 @@ public class MainWindow extends JFrame implements ActionListener {
         
         table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
-        		System.out.println("Clicked");
+        		deleteSelectRow = table.rowAtPoint( e.getPoint() );
         	}
         });
     }	
