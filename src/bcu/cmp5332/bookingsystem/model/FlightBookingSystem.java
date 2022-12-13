@@ -23,11 +23,13 @@ public class FlightBookingSystem {
 
 	public List<Customer> getCustomers() {
 		List<Customer> out = new ArrayList<>(customers.values());
+		System.out.println(customers.size());
 		return Collections.unmodifiableList(out);
 	}
 
 	public List<Booking> getBookings() {
 		List<Booking> out = new ArrayList<>(bookings.values());
+		System.out.println(bookings.size());
 		return Collections.unmodifiableList(out);
 	}
 
@@ -76,5 +78,23 @@ public class FlightBookingSystem {
 			}
 		}
 		customers.put(customer.getId(), customer);
+	}
+	
+	public void addBooking(Booking booking) {
+		bookings.put(booking.getCustomer().getId(), booking);
+	}
+	
+	public ArrayList<Customer> deleteCustomer(int row) {
+		ArrayList<Customer> newCustomers = new ArrayList<Customer>();
+		for(int i = 1 ; i <= customers.size() ; i ++) {
+			if(row!=i) {
+				newCustomers.add(customers.get(i));
+			}
+		}
+		
+		
+		
+		return newCustomers;
+		
 	}
 }

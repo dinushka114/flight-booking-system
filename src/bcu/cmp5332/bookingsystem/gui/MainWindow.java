@@ -1,5 +1,7 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.commands.RemoveCustomer;
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
@@ -8,6 +10,8 @@ import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,7 +27,14 @@ import javax.swing.UIManager;
 
 public class MainWindow extends JFrame implements ActionListener {
 
-    private JMenuBar menuBar;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private int deleteSelectRow = 0;
+	
+	private JMenuBar menuBar;
     private JMenu adminMenu;
     private JMenu flightsMenu;
     private JMenu bookingsMenu;
@@ -179,11 +190,29 @@ public class MainWindow extends JFrame implements ActionListener {
             new AddCustomerWindow(this);
             
         } else if (ae.getSource() == custDel) {
-            
+        	try {
+				deleteSelectedCustomer(deleteSelectRow + 1);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             
         }else if(ae.getSource() ==bookingsView){
         	displayBookings();
         }
+    }
+    
+    public void deleteSelectedCustomer(int row) throws IOException {
+    	System.out.println(row);
+    	Command removeCustomer = new RemoveCustomer(fbs , row);
+    	displayCustomers();
+//    	try {
+//    		Command removeCustomer = new RemoveCustomer(fbs , row);
+////    		displayCustomers();
+//    	}catch(Exception e) {
+//    		JOptionPane.showMessageDialog(null, "Something went wrong" , "Error", JOptionPane.WARNING_MESSAGE);
+//    	}
+//    	
     }
     
     public void displayCustomers() {
@@ -197,6 +226,7 @@ public class MainWindow extends JFrame implements ActionListener {
             data[i][0] = customer.getId();
             data[i][1] = customer.getName();
             data[i][2] = customer.getPhone();
+//            System.out.println(data[i][0] + " " + data[i][1] + " " + data[i][2]);
             
         }
 
@@ -204,6 +234,14 @@ public class MainWindow extends JFrame implements ActionListener {
         this.getContentPane().removeAll();
         this.getContentPane().add(new JScrollPane(table));
         this.revalidate();
+        
+        
+        table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		deleteSelectRow = table.rowAtPoint( e.getPoint() );
+        	}
+        });
+        
     }	
 
     public void displayFlights() {
@@ -224,6 +262,12 @@ public class MainWindow extends JFrame implements ActionListener {
         this.getContentPane().removeAll();
         this.getContentPane().add(new JScrollPane(table));
         this.revalidate();
+        
+        table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		System.out.println("Clicked");
+        	}
+        });
     }	
     
     public void displayBookings() {
@@ -231,12 +275,12 @@ public class MainWindow extends JFrame implements ActionListener {
     	String[] columns = new String[] {"Customer Name" , "Flight Id" , "Departure Date"};
     	
     	Object[][] data = new Object[bookingList.size()][6];
-    	 System.out.println(bookingList.size());
         for (int i = 0; i < bookingList.size(); i++) {
             Booking book = bookingList.get(i);
             data[i][0] = book.getCustomer().getName();
             data[i][1] = book.getFlight().getFlightNumber();
             data[i][2] = book.getBookingDate();
+            
            
         }
 
@@ -244,5 +288,11 @@ public class MainWindow extends JFrame implements ActionListener {
         this.getContentPane().removeAll();
         this.getContentPane().add(new JScrollPane(table));
         this.revalidate();
+        
+        table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		System.out.println("Clicked");
+        	}
+        });
     }
 }

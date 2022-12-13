@@ -33,6 +33,7 @@ public class BookingDataManager implements DataManager {
                      Booking booking = new Booking(customer, flight, date);
                      customer.addBooking(booking);
                      flight.addPassenger(customer);
+                     fbs.addBooking(booking);
                  } catch (NumberFormatException ex) {
                      throw new FlightBookingSystemException("Unable to parse customer id " + properties[0] + " on line " + line_idx
                          + "\nError: " + ex);
