@@ -17,20 +17,21 @@ import javax.swing.UIManager;
 
 import bcu.cmp5332.bookingsystem.commands.AddBooking;
 import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.commands.RemoveBooking;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 
-public class AddBookingWindow extends JFrame implements ActionListener{
+public class RemoveBookingWindow extends JFrame implements ActionListener{
 	
 	private MainWindow mw;
     private JTextField customerId = new JTextField();
     private JTextField flightId = new JTextField();
     private JTextField departureDate = new JTextField();
 
-    private JButton addBtn = new JButton("Add");
+    private JButton addBtn = new JButton("Remove");
     private JButton cancelBtn = new JButton("Cancel");
     
     
-    public AddBookingWindow(MainWindow mw) {
+    public RemoveBookingWindow(MainWindow mw) {
     	this.mw = mw;
     	this.initialize();
     }
@@ -42,17 +43,15 @@ public class AddBookingWindow extends JFrame implements ActionListener{
 
           }
     	  
-    	  setTitle("Add New Booking");
+    	  setTitle("Cancel Booking");
     	  
     	  setSize(350, 160);
           JPanel topPanel = new JPanel();
-          topPanel.setLayout(new GridLayout(3, 2));
+          topPanel.setLayout(new GridLayout(2, 2));
           topPanel.add(new JLabel("Customer Id : "));
           topPanel.add(customerId);
           topPanel.add(new JLabel("Flight Id : "));
           topPanel.add(flightId);
-          topPanel.add(new JLabel("Depature Date : "));
-          topPanel.add(departureDate);
           
 
           JPanel bottomPanel = new JPanel();
@@ -71,30 +70,26 @@ public class AddBookingWindow extends JFrame implements ActionListener{
           setVisible(true);
     }
     
-    public void addBooking() {
-    	try {
-    		int customerIdText = Integer.parseInt(customerId.getText());
-    		int flightNoText = Integer.parseInt(flightId.getText());
-    		LocalDate departureDateText = null;
-    		try {
-    			departureDateText = LocalDate.parse(departureDate.getText());
-            }
-            catch (DateTimeParseException dtpe) {
-                throw new FlightBookingSystemException("Date must be in YYYY-DD-MM format");
-            }
-    		Command AddBooking = new AddBooking(customerIdText , flightNoText , departureDateText);
-    		AddBooking.execute(mw.getFlightBookingSystem());
-    		mw.refreshBookings();
-    		this.setVisible(false);
-    	}catch(FlightBookingSystemException e) {
-    		JOptionPane.showMessageDialog(null, e.getMessage() , "Error", JOptionPane.WARNING_MESSAGE);
-    	}
+    public void removeBooking() throws FlightBookingSystemException {
+    	int customerIdText = Integer.parseInt(customerId.getText());
+		int flightNoText = Integer.parseInt(flightId.getText());
+		
+		Command removeBooking = new RemoveBooking(customerIdText , flightNoText);
+		removeBooking.execute(mw.getFlightBookingSystem());
+		mw.refreshBookings();
+		this.setVisible(false);
+		
     }
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == addBtn) {
-            addBooking();
+            try {
+				removeBooking();
+			} catch (FlightBookingSystemException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } else if (ae.getSource() == cancelBtn) {
             this.setVisible(false);
         }

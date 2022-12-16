@@ -15,12 +15,14 @@ public class AddCustomer  implements Command , DataManager {
 
     private final String name;
     private final String phone;
+    private final String email;
     
     public final String RESOURCE = "./resources/data/customers.txt";
 
-    public AddCustomer(String name, String phone) {
+    public AddCustomer(String name, String phone , String email) {
         this.name = name;
         this.phone = phone;
+        this.email = email;
     }
 
     @Override
@@ -31,7 +33,13 @@ public class AddCustomer  implements Command , DataManager {
              maxId = flightBookingSystem.getCustomers().get(lastIndex).getId();
          }
          
-         Customer customer = new Customer(++maxId, name,phone);
+         for(Customer customer: flightBookingSystem.getCustomers()) {
+        	 if(customer.getEmail().equals(this.email)) {
+        		 throw new FlightBookingSystemException("Customer already registered with this email..");
+        	 }
+         }
+         
+         Customer customer = new Customer(++maxId, name,phone , email);
          flightBookingSystem.addCustomer(customer);
          
          try {
@@ -62,6 +70,7 @@ public class AddCustomer  implements Command , DataManager {
 			out.print(id+SEPARATOR);
 			out.print(this.name + SEPARATOR);
 			out.print(this.phone+ SEPARATOR);
+			out.print(this.email+ SEPARATOR);
 			out.close();
 			br.close();
 			fr.close();

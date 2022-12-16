@@ -1,4 +1,4 @@
-1::LH2560::Birmingham::Munich::2022-11-25::
-2::IS2000::Lahore::Canada::2022-11-30::
-3::BX66::LONDON::DUBAI::2022-12-02::
-4::123123::aadasd::KKLASDKL::2022-12-22::
+1::LH2560::Birmingham::Munich::2022-11-25::1::12500.0::false::
+2::IS2000::Lahore::Canada::2022-11-30::234::15000.0::true::
+3::Rxsjj::kasdk::ekasdk::2022-11-12::1212::9500.0::false::
+4::hhh::hasdadh::jjjsksjsk::2023-01-10::345::18000.0::true::

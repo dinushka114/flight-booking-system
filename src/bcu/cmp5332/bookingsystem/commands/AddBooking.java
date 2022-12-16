@@ -31,12 +31,31 @@ public class AddBooking implements Command, DataManager {
 	@Override
 	public void execute(FlightBookingSystem flightBookingSystem) throws FlightBookingSystemException {
 		Flight flight = flightBookingSystem.getFlightByID(flightId);
+		
+		int noOfBookings = flight.getPassengers().size();
+		
+		if(flight.getIsDeleted()) {
+			throw new FlightBookingSystemException("Sorry...Flight is not available");
+		}
+		
+		if(noOfBookings==flight.getCapacity()) {
+			throw new FlightBookingSystemException("Sorry...All seats were booked");
+		}
+		
+		
 		Customer customer = flightBookingSystem.getCustomerByID(customerId);
+		if(customer.getIsDeleted()) {
+			throw new FlightBookingSystemException("Sorry...Customer is not available");
+		}
+		
+		
 		Booking booking = new Booking(customer, flight, date);
 		customer.addBooking(booking);
 		flight.addPassenger(customer);
+		
 		try {
 			this.storeData(flightBookingSystem);
+			flightBookingSystem.addBooking(booking);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,7 +76,7 @@ public class AddBooking implements Command, DataManager {
 			FileWriter fr = new FileWriter(file, true);
 			BufferedWriter br = new BufferedWriter(fr);
 			PrintWriter out = new PrintWriter(br);
-			out.println();
+			out.print("\n");
 			out.print(this.customerId + SEPARATOR);
 			out.print(this.flightId + SEPARATOR);
 			out.print(this.date + SEPARATOR);

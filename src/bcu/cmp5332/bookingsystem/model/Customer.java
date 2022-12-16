@@ -11,13 +11,24 @@ public class Customer {
     private int id;
     private String name;
     private String phone;
+    private String email;
+    private boolean isDeleted;
     private final List<Booking> bookings = new ArrayList<>();
     
     
-    public Customer(int id, String name, String phone) {
+    public Customer(int id, String name, String phone , String email) {
 		this.id = id;
 		this.name = name;
+		this.email = email;
 		this.phone = phone;
+	}
+    
+    public Customer(int id, String name, String phone , String email , boolean isDelete) {
+		this.id = id;
+		this.name = name;
+		this.email = email;
+		this.phone = phone;
+		this.isDeleted = isDelete;
 	}
     
 	public int getId() {
@@ -39,7 +50,15 @@ public class Customer {
 		this.name = name;
 	}
 
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
+	public String getEmail() {
+		return this.email;
+	}
+	
 	public String getPhone() {
 		return phone;
 	}
@@ -49,6 +68,14 @@ public class Customer {
 		this.phone = phone;
 	}
 
+	
+	public void setIsDeleted(boolean isDelete) {
+		this.isDeleted = isDelete;
+	}
+	
+	public boolean getIsDeleted() {
+		return this.isDeleted;
+	}
 
 	public List<Booking> getBookings() {
 		return bookings;
@@ -68,8 +95,10 @@ public class Customer {
 	 public void addBooking(Booking booking) throws FlightBookingSystemException {
 		 for(Booking b:bookings) {
 			 if(b.getCustomer().getId() == booking.getCustomer().getId()) {
-				 throw new FlightBookingSystemException("Customer already booked with same flight.");
+				 throw new FlightBookingSystemException("Customer already booked flight.");
 			 }
+			 
+			 
 		 }
 		 bookings.add(booking);
 	    }
@@ -84,7 +113,7 @@ public class Customer {
 	        		"---------------------------\n"+
 	        		"Bookings:\n";
 	        for(Booking b:bookings) {
-	        	s = s + " * Booking date: "+b.getBookingDate()+" for "+b.getFlight().getDetailsShort()+"\n";
+	        	s = s + " * Booking date: "+b.getBookingDate()+" for "+b.getFlight().getDetailsShort()+" for $" + b.getFlight().getPrice()  +"\n";
 	        }
 	        
 	        s = s + bookings.size()+" booking(s)";

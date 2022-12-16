@@ -23,13 +23,11 @@ public class FlightBookingSystem {
 
 	public List<Customer> getCustomers() {
 		List<Customer> out = new ArrayList<>(customers.values());
-		System.out.println(customers.size());
 		return Collections.unmodifiableList(out);
 	}
 
 	public List<Booking> getBookings() {
 		List<Booking> out = new ArrayList<>(bookings.values());
-		System.out.println(bookings.size());
 		return Collections.unmodifiableList(out);
 	}
 
@@ -52,6 +50,17 @@ public class FlightBookingSystem {
 			throw new FlightBookingSystemException("There is no customer with that ID.");
 		}
 		return bookings.get(id);
+	}
+	
+	public Booking getBookingByCustIdAndFlightId(int custId , int flightId) {
+		Booking isExists = null;
+		for(Booking booking:bookings.values()) {
+			if(booking.getCustomer().getId()==custId && booking.getFlight().getId()==flightId) {
+				isExists = booking;
+			}
+		}
+		
+		return isExists;
 	}
 
 	public void addFlight(Flight flight) throws FlightBookingSystemException {
@@ -77,6 +86,7 @@ public class FlightBookingSystem {
 				throw new FlightBookingSystemException("There is a customer with same phone number");
 			}
 		}
+		
 		customers.put(customer.getId(), customer);
 	}
 	
@@ -84,28 +94,29 @@ public class FlightBookingSystem {
 		bookings.put(booking.getCustomer().getId(), booking);
 	}
 	
-	public ArrayList<Customer> deleteCustomer(int row) {
-		ArrayList<Customer> newCustomers = new ArrayList<Customer>();
-		for(int i = 1 ; i <= customers.size() ; i ++) {
-			if(row!=i) {
-				newCustomers.add(customers.get(i));
-			}
-		}
-		
-	
-		return newCustomers;
+	public TreeMap<Integer , Customer> deleteCustomer(int row) throws FlightBookingSystemException {
+		customers.remove(row);
+		return (TreeMap<Integer, Customer>) customers;
 	}
 	
 	
-	public ArrayList<Flight> deleteFlight(int row) {
-		ArrayList<Flight> newFlights = new ArrayList<Flight>();
-		for(int i = 1 ; i <= flights.size() ; i ++) {
-			if(row!=i) {
-				newFlights.add(flights.get(i));
+	public TreeMap<Integer , Flight> deleteFlight(int row) {		
+		flights.remove(row);
+		return (TreeMap<Integer, Flight>) flights;
+	}
+	
+	public TreeMap<Integer , Booking> cancelBooking(int custId , int flightId){
+		for(int i = 1 ; i <= bookings.size() ; i ++) {
+			if(bookings.get(i).getCustomer().getId()==custId && bookings.get(i).getFlight().getId()==flightId) {
+				System.out.println("Remove booking " + i);
+				bookings.remove(i);
+				break;
 			}
 		}
 		
-	
-		return newFlights;
+		return (TreeMap<Integer, Booking>) bookings;
 	}
+	
+	
+	
 }

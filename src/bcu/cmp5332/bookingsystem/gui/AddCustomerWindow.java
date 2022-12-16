@@ -22,6 +22,7 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
     private MainWindow mw;
     private JTextField nameText = new JTextField();
     private JTextField phoneText = new JTextField();
+    private JTextField emailText = new JTextField();
     
 
     private JButton addBtn = new JButton("Add");
@@ -43,15 +44,17 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
 
         }
 
-        setTitle("Add a New Flight");
+        setTitle("Add a New Customer");
 
         setSize(350, 220);
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(5, 2));
+        topPanel.setLayout(new GridLayout(3, 2));
         topPanel.add(new JLabel("Name : "));
         topPanel.add(nameText);
-        topPanel.add(new JLabel("Phone # : "));
+        topPanel.add(new JLabel("Phone  : "));
         topPanel.add(phoneText);
+        topPanel.add(new JLabel("Email : "));
+        topPanel.add(emailText);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(1, 3));
@@ -84,15 +87,16 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
         try {
             String name = nameText.getText();
             String phone = phoneText.getText();
+            String email = emailText.getText();
             // create and execute the AddCustomer Command
-            Command addCustomer = new AddCustomer(name, phone);
+            Command addCustomer = new AddCustomer(name, phone , email);
             addCustomer.execute(mw.getFlightBookingSystem());
             // refresh the view with the list of customers
             mw.displayCustomers();
             // hide (close) the AddCustomerWindow
             this.setVisible(false);
         } catch (FlightBookingSystemException ex) {
-            JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -16,15 +16,34 @@ public class Flight {
     private String origin;
     private String destination;
     private LocalDate departureDate;
-
+    private int capacity;
+    private float price;
+    private boolean isDeleted;
+    
     private final Set<Customer> passengers;
 
-    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate) {
+    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate , int capacity , float price) {
         this.id = id;
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.departureDate = departureDate;
+        this.capacity = capacity;
+        this.price = price;
+       
+        
+        passengers = new HashSet<>();
+    }
+    
+    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate , int capacity , float price , boolean isDelete)  {
+        this.id = id;
+        this.flightNumber = flightNumber;
+        this.origin = origin;
+        this.destination = destination;
+        this.departureDate = departureDate;
+        this.capacity = capacity;
+        this.price = price;
+        this.isDeleted = isDelete;
         
         passengers = new HashSet<>();
     }
@@ -69,8 +88,32 @@ public class Flight {
         this.departureDate = departureDate;
     }
 
+    public int getCapacity() {
+    	return this.capacity;
+    }
+    
+    public void setCapacity(int capacity) {
+    	this.capacity = capacity;
+    }
+    
     public List<Customer> getPassengers() {
         return new ArrayList<>(passengers);
+    }
+    
+    public void setPrice(float price) {
+    	this.price = price;
+    }
+    
+    public float getPrice() {
+    	return this.price;
+    }
+    
+    public void setIsDeleted(boolean isDelete) {
+    	this.isDeleted = isDelete;
+    }
+    
+    public boolean getIsDeleted() {
+    	return this.isDeleted;
     }
 	
     public String getDetailsShort() {
