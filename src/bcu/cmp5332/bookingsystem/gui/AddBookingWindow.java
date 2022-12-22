@@ -24,7 +24,6 @@ public class AddBookingWindow extends JFrame implements ActionListener{
 	private MainWindow mw;
     private JTextField customerId = new JTextField();
     private JTextField flightId = new JTextField();
-    private JTextField departureDate = new JTextField();
 
     private JButton addBtn = new JButton("Add");
     private JButton cancelBtn = new JButton("Cancel");
@@ -46,13 +45,11 @@ public class AddBookingWindow extends JFrame implements ActionListener{
     	  
     	  setSize(350, 160);
           JPanel topPanel = new JPanel();
-          topPanel.setLayout(new GridLayout(3, 2));
+          topPanel.setLayout(new GridLayout(2, 2));
           topPanel.add(new JLabel("Customer Id : "));
           topPanel.add(customerId);
           topPanel.add(new JLabel("Flight Id : "));
           topPanel.add(flightId);
-          topPanel.add(new JLabel("Depature Date : "));
-          topPanel.add(departureDate);
           
 
           JPanel bottomPanel = new JPanel();
@@ -75,14 +72,8 @@ public class AddBookingWindow extends JFrame implements ActionListener{
     	try {
     		int customerIdText = Integer.parseInt(customerId.getText());
     		int flightNoText = Integer.parseInt(flightId.getText());
-    		LocalDate departureDateText = null;
-    		try {
-    			departureDateText = LocalDate.parse(departureDate.getText());
-            }
-            catch (DateTimeParseException dtpe) {
-                throw new FlightBookingSystemException("Date must be in YYYY-DD-MM format");
-            }
-    		Command AddBooking = new AddBooking(customerIdText , flightNoText , departureDateText);
+
+    		Command AddBooking = new AddBooking(customerIdText , flightNoText);
     		AddBooking.execute(mw.getFlightBookingSystem());
     		mw.refreshBookings();
     		this.setVisible(false);

@@ -66,11 +66,11 @@ public class AddCustomer  implements Command , DataManager {
 			FileWriter fr = new FileWriter(file, true);
 			BufferedWriter br = new BufferedWriter(fr);
 			PrintWriter out = new PrintWriter(br);
-			out.println();
 			out.print(id+SEPARATOR);
 			out.print(this.name + SEPARATOR);
 			out.print(this.phone+ SEPARATOR);
 			out.print(this.email+ SEPARATOR);
+			out.println();
 			out.close();
 			br.close();
 			fr.close();

@@ -97,9 +97,25 @@ public class Customer {
 			 if(b.getCustomer().getId() == booking.getCustomer().getId()) {
 				 throw new FlightBookingSystemException("Customer already booked flight.");
 			 }
-			 
-			 
+			  
 		 }
+		 
+//		 for(Booking b:bookings) {
+//			for(Customer customer:b.getFlight().getPassengers()) {
+//				
+//				for(Booking book:customer.getBookings()) {
+//					if(book.getFlight().getId()==booking.getFlight().getId()) {
+//						throw new FlightBookingSystemException("Customer already booked this flight.");
+//					}
+//				}
+//				
+////				if(customer.getId()==booking.getCustomer().getId()) {
+////					System.out.println(customer.getId()+ " = " + booking.getCustomer().getId());
+////					throw new FlightBookingSystemException("Customer already booked this flight.");
+////				}
+//			}
+//			  
+//		 }
 		 bookings.add(booking);
 	    }
 	 
@@ -113,7 +129,7 @@ public class Customer {
 	        		"---------------------------\n"+
 	        		"Bookings:\n";
 	        for(Booking b:bookings) {
-	        	s = s + " * Booking date: "+b.getBookingDate()+" for "+b.getFlight().getDetailsShort()+" for $" + b.getFlight().getPrice()  +"\n";
+	        	s = s + " * Booking date: "+b.getBookingDate()+" for "+b.getFlight().getDetailsShort()+" for $" + b.getPrice()  +"\n";
 	        }
 	        
 	        s = s + bookings.size()+" booking(s)";

@@ -6,7 +6,8 @@ import java.util.*;
 
 public class FlightBookingSystem {
 
-	private final LocalDate systemDate = LocalDate.parse("2020-11-11");
+	private final LocalDate systemDate = LocalDate.parse(LocalDate.now().toString());
+	
 
 	private final Map<Integer, Customer> customers = new TreeMap<>();
 	private final Map<Integer, Flight> flights = new TreeMap<>();
@@ -32,8 +33,9 @@ public class FlightBookingSystem {
 	}
 
 	public Flight getFlightByID(int id) throws FlightBookingSystemException {
+		System.out.println(this.flights);
 		if (!flights.containsKey(id)) {
-			throw new FlightBookingSystemException("There is no flight with that ID.");
+			throw new FlightBookingSystemException("There is no flight with that ID. ");
 		}
 		return flights.get(id);
 	}
@@ -46,8 +48,9 @@ public class FlightBookingSystem {
 	}
 
 	public Booking getBookingById(int id) throws FlightBookingSystemException {
+		System.out.println(bookings.size());
 		if (!bookings.containsKey(id)) {
-			throw new FlightBookingSystemException("There is no customer with that ID.");
+			throw new FlightBookingSystemException("There is no bookings with that ID.");
 		}
 		return bookings.get(id);
 	}
@@ -61,6 +64,18 @@ public class FlightBookingSystem {
 		}
 		
 		return isExists;
+	}
+	
+	
+	public List<Flight> getActualFlights() {
+		List<Flight> out = new ArrayList<>();
+		for(Flight flight:flights.values()) {
+			if(!flight.getIsDeleted()) {
+				out.add(flight);
+			}
+		}
+		
+		return out;
 	}
 
 	public void addFlight(Flight flight) throws FlightBookingSystemException {
@@ -108,7 +123,6 @@ public class FlightBookingSystem {
 	public TreeMap<Integer , Booking> cancelBooking(int custId , int flightId){
 		for(int i = 1 ; i <= bookings.size() ; i ++) {
 			if(bookings.get(i).getCustomer().getId()==custId && bookings.get(i).getFlight().getId()==flightId) {
-				System.out.println("Remove booking " + i);
 				bookings.remove(i);
 				break;
 			}

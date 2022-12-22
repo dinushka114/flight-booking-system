@@ -19,25 +19,27 @@ import javax.swing.UIManager;
 import bcu.cmp5332.bookingsystem.commands.AddBooking;
 import bcu.cmp5332.bookingsystem.commands.Command;
 import bcu.cmp5332.bookingsystem.commands.RemoveBooking;
+import bcu.cmp5332.bookingsystem.commands.UpdateBooking;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
-public class RemoveBookingWindow extends JFrame implements ActionListener {
+public class UpdateBookingWindow extends JFrame implements ActionListener {
 
 	private MainWindow mw;
-	private JTextField customerId = new JTextField();
+	private int bookingId;
 	private JTextField flightId = new JTextField();
-	private JTextField departureDate = new JTextField();
-
-	private JButton addBtn = new JButton("Remove");
+	
+	private JButton addBtn = new JButton("Update");
 	private JButton cancelBtn = new JButton("Cancel");
 
-	public RemoveBookingWindow(MainWindow mw) {
+	public UpdateBookingWindow(MainWindow mw , int row) {
 		this.mw = mw;
+		this.bookingId = row;
 		this.initialize();
+
 	}
 
 	public void initialize() {
@@ -47,13 +49,11 @@ public class RemoveBookingWindow extends JFrame implements ActionListener {
 
 		}
 
-		setTitle("Cancel Booking");
+		setTitle("Update Booking");
 
 		setSize(350, 160);
 		JPanel topPanel = new JPanel();
-		topPanel.setLayout(new GridLayout(2, 2));
-		topPanel.add(new JLabel("Customer Id : "));
-		topPanel.add(customerId);
+		topPanel.setLayout(new GridLayout(1, 1));
 		topPanel.add(new JLabel("Flight Id : "));
 		topPanel.add(flightId);
 
@@ -73,25 +73,31 @@ public class RemoveBookingWindow extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
-	public void removeBooking() throws FlightBookingSystemException {
-		int customerIdText = Integer.parseInt(customerId.getText());
+	public void updateBooking() throws FlightBookingSystemException {
+
 		int flightNoText = Integer.parseInt(flightId.getText());
-
+		
+		Booking book = mw.getFlightBookingSystem().getBookingById(this.bookingId);
+//		System.out.println(book.getCustomer().getName());
+		
+		
+		
+//
 		LocalDate currentDate = new FlightBookingSystem().getSystemDate();
-
+//
 		float actualPrice = 0, cancelPayment = 0;
-
+//
 		Flight flight = mw.getFlightBookingSystem().getFlightByID(flightNoText);
-		Customer customer = mw.getFlightBookingSystem().getCustomerByID(customerIdText);
-
+		
+//
 		int days = Period.between(currentDate, flight.getDepartureDate()).getDays();
-
-		for (Booking book : customer.getBookings()) {
-			if (book.getCustomer().getId() == customerIdText && book.getFlight().getId() == flightNoText) {
+//
+		for (Booking booking : book.getCustomer().getBookings()) {
+			if (booking.getCustomer().getId() == book.getCustomer().getId() && booking.getFlight().getId() == flightNoText) {
 				actualPrice = book.getPrice();
 			}
 		}
-
+//
 		if (days < 3) {
 			cancelPayment = (float) (actualPrice * 0.5);
 		} else if (days < 6) {
@@ -104,8 +110,8 @@ public class RemoveBookingWindow extends JFrame implements ActionListener {
 			cancelPayment = (float) (actualPrice * 0.1);
 		}
 
-		Command removeBooking = new RemoveBooking(customerIdText, flightNoText);
-		removeBooking.execute(mw.getFlightBookingSystem());
+		Command updateBooking = new UpdateBooking(mw.getFlightBookingSystem(), book, flight);
+		updateBooking.execute(mw.getFlightBookingSystem());
 		JOptionPane.showMessageDialog(this,
 				"You just received a  " + (actualPrice - cancelPayment) + " of " + actualPrice, "Info",
 				JOptionPane.INFORMATION_MESSAGE);
@@ -118,7 +124,7 @@ public class RemoveBookingWindow extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == addBtn) {
 			try {
-				removeBooking();
+				updateBooking();
 			} catch (FlightBookingSystemException e) {
 				JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
 			}

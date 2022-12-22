@@ -40,11 +40,8 @@ public class CommandParser {
                 
                 System.out.print("No Of Seats(capacity): ");
                 int capacity = Integer.parseInt(reader.readLine());
-                
-                System.out.print("Price: ");
-                float price = Float.parseFloat(reader.readLine());
 
-                return new AddFlight(flighNumber, origin, destination, departureDate , capacity,price);
+                return new AddFlight(flighNumber, origin, destination, departureDate , capacity);
             } else if (cmd.equals("addcustomer")) {
             	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 System.out.print("Customer Name: ");
@@ -84,8 +81,8 @@ public class CommandParser {
 
                 if (cmd.equals("addbooking")) {
                 	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                    LocalDate departureDate = parseDateWithAttempts(reader);
-                	return new AddBooking(cid,fid,departureDate);
+//                    LocalDate departureDate = parseDateWithAttempts(reader);
+                	return new AddBooking(cid,fid);
                     
                 } else if (cmd.equals("cancelbooking")) {
                 	return new RemoveBooking(cid, fid);

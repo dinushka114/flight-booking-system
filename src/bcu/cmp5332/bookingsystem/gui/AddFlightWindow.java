@@ -27,7 +27,6 @@ public class AddFlightWindow extends JFrame implements ActionListener {
     private JTextField destinationText = new JTextField();
     private JTextField depDateText = new JTextField();
     private JTextField capacityText = new JTextField();
-    private JTextField priceText = new JTextField();
 
     private JButton addBtn = new JButton("Add");
     private JButton cancelBtn = new JButton("Cancel");
@@ -52,7 +51,7 @@ public class AddFlightWindow extends JFrame implements ActionListener {
 
         setSize(350, 220);
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(6, 2));
+        topPanel.setLayout(new GridLayout(5, 2));
         topPanel.add(new JLabel("Flight No : "));
         topPanel.add(flightNoText);
         topPanel.add(new JLabel("Origin : "));
@@ -63,8 +62,6 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         topPanel.add(depDateText);
         topPanel.add(new JLabel("No Of Seats : "));
         topPanel.add(capacityText);
-        topPanel.add(new JLabel("Price : "));
-        topPanel.add(priceText);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(1, 3));
@@ -100,7 +97,6 @@ public class AddFlightWindow extends JFrame implements ActionListener {
             String destination = destinationText.getText();
             LocalDate departureDate = null;
             int capacity = Integer.parseInt(capacityText.getText());
-            float price = Float.parseFloat(priceText.getText());
             try {
                 departureDate = LocalDate.parse(depDateText.getText());
             }
@@ -108,7 +104,7 @@ public class AddFlightWindow extends JFrame implements ActionListener {
                 throw new FlightBookingSystemException("Date must be in YYYY-DD-MM format");
             }
             // create and execute the AddFlight Command
-            Command addFlight = new AddFlight(flightNumber, origin, destination, departureDate , capacity , price);
+            Command addFlight = new AddFlight(flightNumber, origin, destination, departureDate , capacity);
             addFlight.execute(mw.getFlightBookingSystem());
             // refresh the view with the list of flights
             mw.displayFlights();

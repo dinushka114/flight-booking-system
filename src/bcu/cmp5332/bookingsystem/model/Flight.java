@@ -17,32 +17,18 @@ public class Flight {
     private String destination;
     private LocalDate departureDate;
     private int capacity;
-    private float price;
     private boolean isDeleted;
     
     private final Set<Customer> passengers;
 
-    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate , int capacity , float price) {
-        this.id = id;
-        this.flightNumber = flightNumber;
-        this.origin = origin;
-        this.destination = destination;
-        this.departureDate = departureDate;
-        this.capacity = capacity;
-        this.price = price;
-       
-        
-        passengers = new HashSet<>();
-    }
     
-    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate , int capacity , float price , boolean isDelete)  {
+    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate , int capacity ,  boolean isDelete)  {
         this.id = id;
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.departureDate = departureDate;
         this.capacity = capacity;
-        this.price = price;
         this.isDeleted = isDelete;
         
         passengers = new HashSet<>();
@@ -100,13 +86,6 @@ public class Flight {
         return new ArrayList<>(passengers);
     }
     
-    public void setPrice(float price) {
-    	this.price = price;
-    }
-    
-    public float getPrice() {
-    	return this.price;
-    }
     
     public void setIsDeleted(boolean isDelete) {
     	this.isDeleted = isDelete;

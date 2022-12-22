@@ -10,7 +10,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.time.Period;
 
 public class AddFlight implements Command, DataManager {
 
@@ -19,19 +24,21 @@ public class AddFlight implements Command, DataManager {
 	private final String destination;
 	private final LocalDate departureDate;
 	private final int capacity;
-	private final float price;
+	private final boolean isDeleted;
 
 	public final String RESOURCE = "./resources/data/flights.txt";
 
-	public AddFlight(String flightNumber, String origin, String destination, LocalDate departureDate, int capacity,
-			float price) {
+	public AddFlight(String flightNumber, String origin, String destination, LocalDate departureDate, int capacity) throws FlightBookingSystemException {
 		this.flightNumber = flightNumber;
 		this.origin = origin;
 		this.destination = destination;
 		this.departureDate = departureDate;
 		this.capacity = capacity;
-		this.price = price;
+		this.isDeleted = false;
+
 	}
+	
+
 
 	@Override
 	public void execute(FlightBookingSystem flightBookingSystem) throws FlightBookingSystemException {
@@ -41,9 +48,8 @@ public class AddFlight implements Command, DataManager {
 			maxId = flightBookingSystem.getFlights().get(lastIndex).getId();
 		}
 
-		Flight flight = new Flight(++maxId, flightNumber, origin, destination, departureDate, capacity, price);
+		Flight flight = new Flight(++maxId, flightNumber, origin, destination, departureDate, capacity , isDeleted);
 		flightBookingSystem.addFlight(flight);
-
 		try {
 			this.storeData(flightBookingSystem);
 		} catch (Exception e) {
@@ -68,14 +74,14 @@ public class AddFlight implements Command, DataManager {
 			FileWriter fr = new FileWriter(file, true);
 			BufferedWriter br = new BufferedWriter(fr);
 			PrintWriter out = new PrintWriter(br);
-			out.println();
 			out.print(id + SEPARATOR);
 			out.print(this.flightNumber + SEPARATOR);
 			out.print(this.origin + SEPARATOR);
 			out.print(this.destination + SEPARATOR);
 			out.print(this.departureDate + SEPARATOR);
 			out.print(this.capacity + SEPARATOR);
-			out.print(this.price + SEPARATOR);
+			out.print(this.isDeleted+ SEPARATOR);
+			out.println();
 			out.close();
 			br.close();
 			fr.close();
