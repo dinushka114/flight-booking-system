@@ -33,11 +33,21 @@ public class FlightBookingSystem {
 	}
 
 	public Flight getFlightByID(int id) throws FlightBookingSystemException {
-		System.out.println(this.flights);
 		if (!flights.containsKey(id)) {
 			throw new FlightBookingSystemException("There is no flight with that ID. ");
 		}
 		return flights.get(id);
+	}
+	
+	public Flight getFlightByFlightNo(String flightNo) throws FlightBookingSystemException {
+		Flight flightByNo = null;
+		for(Flight flight:flights.values()) {
+			if(flight.getFlightNumber().equals(flightNo)) {
+				flightByNo =  flight;
+			}
+		}
+
+		return flightByNo;
 	}
 
 	public Customer getCustomerByID(int id) throws FlightBookingSystemException {
@@ -68,20 +78,28 @@ public class FlightBookingSystem {
 	
 	
 	public List<Flight> getActualFlights() {
+		
 		List<Flight> out = new ArrayList<>();
 		for(Flight flight:flights.values()) {
-			if(!flight.getIsDeleted()) {
+			if(flight.getIsDeleted()==false && systemDate.compareTo(flight.getDepartureDate()) < 0) {
 				out.add(flight);
+				System.out.println(flight.getFlightNumber());
 			}
 		}
 		
 		return out;
 	}
+	
 
 	public void addFlight(Flight flight) throws FlightBookingSystemException {
 		if (flights.containsKey(flight.getId())) {
-			throw new IllegalArgumentException("Duplicate flight ID.");
+			throw new FlightBookingSystemException("Duplicate flight ID.");
 		}
+		
+		if(this.getFlightByFlightNo(flight.getFlightNumber())!=null) {
+			throw new FlightBookingSystemException("Duplicate flight No.");
+		}
+		
 		for (Flight existing : flights.values()) {
 			if (existing.getFlightNumber().equals(flight.getFlightNumber())
 					&& existing.getDepartureDate().isEqual(flight.getDepartureDate())) {
@@ -102,7 +120,26 @@ public class FlightBookingSystem {
 			}
 		}
 		
+		for (Customer existing : customers.values()) {
+			if (existing.getEmail().equals(customer.getEmail())) {
+				throw new FlightBookingSystemException("There is a customer with same Email");
+			}
+		}
+		
 		customers.put(customer.getId(), customer);
+	}
+	
+	public Customer getCustomerByPhone(String phone) {
+		Customer selectedCustomer = null;
+		
+		for(Customer customer:customers.values()) {
+				if(customer.getPhone().equals(phone)) {
+					selectedCustomer = customer;
+				}
+		}
+		
+		return selectedCustomer;
+		
 	}
 	
 	public void addBooking(Booking booking) {

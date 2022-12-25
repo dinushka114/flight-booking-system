@@ -17,8 +17,8 @@ public class RemoveFlight implements Command, DataManager{
 	
 public final String RESOURCE = "./resources/data/flights.txt";
 	
-	public RemoveFlight(FlightBookingSystem fbs , int row) throws IOException, FlightBookingSystemException {
-		deleteFlight(fbs , row);
+	public RemoveFlight(FlightBookingSystem fbs , String flightNo) throws IOException, FlightBookingSystemException {
+		deleteFlight(fbs , flightNo);
 	}
 
 
@@ -40,11 +40,10 @@ public final String RESOURCE = "./resources/data/flights.txt";
 		
 	}
 	
-	public void deleteFlight(FlightBookingSystem fbs , int id) throws IOException, FlightBookingSystemException {
+	public void deleteFlight(FlightBookingSystem fbs , String flightId) throws IOException, FlightBookingSystemException {
 		
-		fbs.getFlightByID(id).setIsDeleted(true);
+		fbs.getFlightByFlightNo(flightId).setIsDeleted(true);
 		List<Flight> flights = fbs.getFlights();
-		
 		
 		try (PrintWriter out = new PrintWriter(new FileWriter(RESOURCE))) {
 			int temp_id = 1;         

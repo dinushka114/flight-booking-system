@@ -41,6 +41,9 @@ public class RemoveBooking implements Command, DataManager {
 		
 		customer.cancelBookingForFlight(flight);
 		flight.removePassenger(customer);
+		
+		System.out.println(customer.getName());
+		System.out.println(flight.getFlightNumber());
 
 		try {
 			cancelBooking(flightBookingSystem, flightId, customerId);

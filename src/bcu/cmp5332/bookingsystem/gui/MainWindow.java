@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.text.ParseException;
@@ -42,6 +43,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private int deleteSelectRow = 0;
+	private String selectedId = null;
 
 	private JMenuBar menuBar;
 	private JMenu adminMenu;
@@ -197,7 +199,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
 		} else if (ae.getSource() == flightsDel) {
 			try {
-				deleteSelectedFlight(deleteSelectRow + 1);
+				deleteSelectedFlight(selectedId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -216,7 +218,7 @@ public class MainWindow extends JFrame implements ActionListener {
 			new AddBookingWindow(this);
 
 		} else if (ae.getSource() == bookingsUpdate) {
-			new UpdateBookingWindow(this , deleteSelectRow + 1);
+			new UpdateBookingWindow(this, deleteSelectRow + 1);
 		}
 
 		else if (ae.getSource() == bookingsCancel) {
@@ -239,7 +241,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
 		} else if (ae.getSource() == custDel) {
 			try {
-				deleteSelectedCustomer(deleteSelectRow + 1);
+				deleteSelectedCustomer(selectedId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -249,7 +251,6 @@ public class MainWindow extends JFrame implements ActionListener {
 			displayBookings();
 		}
 	}
-
 
 	public void showBookings(int row) throws FlightBookingSystemException {
 		String bookingDetails = "";
@@ -278,40 +279,50 @@ public class MainWindow extends JFrame implements ActionListener {
 
 	}
 
-	public void deleteSelectedCustomer(int row) throws IOException {
+	public void deleteSelectedCustomer(String customerId) throws IOException {
 		try {
-			Command removeCustomer = new RemoveCustomer(fbs, row);
-			refreshCustomers(row);
+			Command removeCustomer = new RemoveCustomer(fbs, customerId);
+			refreshCustomers();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
 		}
 
 	}
 
-	public void deleteSelectedFlight(int row) throws IOException {
+	public void deleteSelectedFlight(String flightNo) throws IOException {
 		try {
-			Command removeFlight = new RemoveFlight(fbs, row);
-			refreshFlights(row);
+			Command removeFlight = new RemoveFlight(fbs, flightNo);
+			refreshFlights();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
 		}
 
 	}
 
-	public void refreshFlights(int id) {
-		List<Flight> flightsList = fbs.getFlights();
-		// headers for the table
-		String[] columns = new String[] { "Flight No", "Origin", "Destination", "Departure Date", "No Of Seats" };
+	public void refreshFlights() {
+		List<Flight> flightsList = new ArrayList<Flight>();
+		LocalDate systemDate = fbs.getSystemDate();
+
+		for (Flight current : fbs.getFlights()) {
+			if (current.getIsDeleted() == false && systemDate.compareTo(current.getDepartureDate()) < 0) {
+				flightsList.add(current);
+			}
+		}
+
+		int actualSize = fbs.getActualFlights().size();
+		String[] columns = new String[] { "FLight Id", "Flight No", "Origin", "Destination", "Departure Date",
+				"No Of Seats" };
 
 		Object[][] data = new Object[flightsList.size()][6];
 		for (int i = 0; i < flightsList.size(); i++) {
 			Flight flight = flightsList.get(i);
 			if (!flight.getIsDeleted()) {
-				data[i][0] = flight.getFlightNumber();
-				data[i][1] = flight.getOrigin();
-				data[i][2] = flight.getDestination();
-				data[i][3] = flight.getDepartureDate();
-				data[i][4] = flight.getCapacity();
+				data[i][0] = flight.getId();
+				data[i][1] = flight.getFlightNumber();
+				data[i][2] = flight.getOrigin();
+				data[i][3] = flight.getDestination();
+				data[i][4] = flight.getDepartureDate();
+				data[i][5] = flight.getCapacity();
 			}
 		}
 
@@ -323,13 +334,22 @@ public class MainWindow extends JFrame implements ActionListener {
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				deleteSelectRow = table.rowAtPoint(e.getPoint());
+				int row = table.getSelectedRow();
+				selectedId = (String) table.getValueAt(row, 0);
 			}
 		});
 	}
 
-	public void refreshCustomers(int id) throws IOException, FlightBookingSystemException {
-		List<Customer> customersList = fbs.getCustomers();
-		// headers for the table
+	public void refreshCustomers() throws IOException, FlightBookingSystemException {
+
+		List<Customer> customersList = new ArrayList<Customer>();
+
+		for (Customer current : fbs.getCustomers()) {
+			if (!current.getIsDeleted()) {
+				customersList.add(current);
+			}
+		}
+
 		String[] columns = new String[] { "Customer No", "Name", "Phone", "Email", "No of Bookings" };
 
 		Object[][] data = new Object[customersList.size()][6];
@@ -353,27 +373,34 @@ public class MainWindow extends JFrame implements ActionListener {
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				deleteSelectRow = table.rowAtPoint(e.getPoint());
-				System.out.println(deleteSelectRow);
+				int row = table.getSelectedRow();
+				selectedId = (String) table.getValueAt(row, 0);
 			}
 		});
 	}
 
 	public void refreshBookings() {
-		List<Booking> bookingList = fbs.getBookings();
-		String[] columns = new String[] { "Customer Name", "Flight Id","Price" ,"Booking Date" , "Cancel/Update Price" };
-		
+		List<Booking> bookingList = new ArrayList<Booking>();
+
+		for (Booking current : fbs.getBookings()) {
+			if (!current.getFlight().getIsDeleted() && current.getCustomer().getIsDeleted() == false) {
+				bookingList.add(current);
+			}
+		}
+		String[] columns = new String[] { "Customer No", "Customer Name", "Flight Id", "Price", "Booking Date",
+				"Cancel/Update Price" };
+
 		LocalDate currentDate = new FlightBookingSystem().getSystemDate();
-		
-		float cancelPayment = 0;	
+
+		float cancelPayment = 0;
 
 		Object[][] data = new Object[bookingList.size()][6];
 		for (int i = 0; i < bookingList.size(); i++) {
 			Booking book = bookingList.get(i);
 			if (!book.getFlight().getIsDeleted()) {
-				
+
 				int days = Period.between(currentDate, book.getFlight().getDepartureDate()).getDays();
-				System.out.println("days book " + days);
-				
+
 				if (days < 3) {
 					cancelPayment = (float) (book.getPrice() * 0.5);
 				} else if (days < 6) {
@@ -385,13 +412,13 @@ public class MainWindow extends JFrame implements ActionListener {
 				} else {
 					cancelPayment = (float) (book.getPrice() * 0.1);
 				}
-				
-				
-				data[i][0] = book.getCustomer().getName();
-				data[i][1] = book.getFlight().getFlightNumber();
-				data[i][2] = book.getPrice();
-				data[i][3] = book.getBookingDate();
-				data[i][4] = cancelPayment;
+
+				data[i][0] = book.getCustomer().getId();
+				data[i][1] = book.getCustomer().getName();
+				data[i][2] = book.getFlight().getFlightNumber();
+				data[i][3] = book.getPrice();
+				data[i][4] = book.getBookingDate();
+				data[i][5] = cancelPayment;
 			}
 
 		}
@@ -400,7 +427,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		this.getContentPane().removeAll();
 		this.getContentPane().add(new JScrollPane(table));
 		this.revalidate();
-		
+
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				deleteSelectRow = table.rowAtPoint(e.getPoint());
@@ -410,7 +437,13 @@ public class MainWindow extends JFrame implements ActionListener {
 	}
 
 	public void displayCustomers() {
-		List<Customer> customersList = fbs.getCustomers();
+		List<Customer> customersList = new ArrayList<Customer>();
+
+		for (Customer current : fbs.getCustomers()) {
+			if (current.getIsDeleted() == false) {
+				customersList.add(current);
+			}
+		}
 		// headers for the table
 		String[] columns = new String[] { "Customer No", "Name", "Phone", "Email", "No of Bookings" };
 
@@ -434,30 +467,47 @@ public class MainWindow extends JFrame implements ActionListener {
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				deleteSelectRow = table.rowAtPoint(e.getPoint());
+				int row = table.getSelectedRow();
+				selectedId = (String) table.getValueAt(row, 2).toString();
+				System.out.println(selectedId);
 			}
 		});
 
 	}
 
 	public void displayFlights() {
-		List<Flight> flightsList = fbs.getFlights();
-		int actualSize = 1;
+		List<Flight> flightsList = new ArrayList<Flight>();
+		LocalDate systemDate = fbs.getSystemDate();
+
+		for (Flight current : fbs.getFlights()) {
+			if (current.getIsDeleted() == false && systemDate.compareTo(current.getDepartureDate()) < 0) {
+				flightsList.add(current);
+			}
+		}
+
+		System.out.println(flightsList.size());
+
+		int actualSize = fbs.getActualFlights().size();
 		// headers for the table
-		String[] columns = new String[] { "Flight No", "Origin", "Destination", "Departure Date", "No Of Seats" };
+		String[] columns = new String[] { "Flight Id", "Flight No", "Origin", "Destination", "Departure Date",
+				"No Of Seats" };
 
 		Object[][] data = new Object[flightsList.size()][6];
+//		ArrayList[][] data = new ArrayList[actualSize][actualSize];
 
 		for (int i = 0; i < flightsList.size(); i++) {
 
 			Flight flight = flightsList.get(i);
-			LocalDate systemDate = fbs.getSystemDate();
 
 			if (!flight.getIsDeleted() && systemDate.compareTo(flight.getDepartureDate()) < 0) {
-				data[i][0] = flight.getFlightNumber();
-				data[i][1] = flight.getOrigin();
-				data[i][2] = flight.getDestination();
-				data[i][3] = flight.getDepartureDate();
-				data[i][4] = flight.getCapacity();
+
+				data[i][0] = flight.getId();
+				data[i][1] = flight.getFlightNumber();
+				data[i][2] = flight.getOrigin();
+				data[i][3] = flight.getDestination();
+				data[i][4] = flight.getDepartureDate();
+				data[i][5] = flight.getCapacity();
+
 			}
 
 		}
@@ -470,26 +520,36 @@ public class MainWindow extends JFrame implements ActionListener {
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				deleteSelectRow = table.rowAtPoint(e.getPoint());
+				int row = table.getSelectedRow();
+				selectedId = (String) table.getValueAt(row, 0);
 			}
 		});
 	}
 
 	public void displayBookings() {
-		List<Booking> bookingList = fbs.getBookings();
-		String[] columns = new String[] { "Customer Name", "Flight Id","Price" ,"Booking Date" , "Cancel/Update Price" };
-		
+		List<Booking> bookingList = new ArrayList<Booking>();
+
+		for (Booking current : fbs.getBookings()) {
+			if (!current.getFlight().getIsDeleted() && current.getCustomer().getIsDeleted() == false) {
+				bookingList.add(current);
+			}
+		}
+
+		String[] columns = new String[] { "Customer No", "Customer Name", "Flight Id", "Price", "Booking Date",
+				"Cancel/Update Price" };
+
 		LocalDate currentDate = new FlightBookingSystem().getSystemDate();
-		
-		float cancelPayment = 0;		
+
+		float cancelPayment = 0;
 
 		Object[][] data = new Object[bookingList.size()][6];
 		for (int i = 0; i < bookingList.size(); i++) {
 			if (bookingList.get(i) != null) {
 				Booking book = bookingList.get(i);
 				if (!book.getFlight().getIsDeleted()) {
-					
+
 					int days = Period.between(currentDate, book.getFlight().getDepartureDate()).getDays();
-					
+
 					if (days < 3) {
 						cancelPayment = (float) (book.getPrice() * 0.5);
 					} else if (days < 6) {
@@ -501,13 +561,13 @@ public class MainWindow extends JFrame implements ActionListener {
 					} else {
 						cancelPayment = (float) (book.getPrice() * 0.1);
 					}
-					
-					
-					data[i][0] = book.getCustomer().getName();
-					data[i][1] = book.getFlight().getFlightNumber();
-					data[i][2] = book.getPrice();
-					data[i][3] = book.getBookingDate();
-					data[i][4] = cancelPayment;
+
+					data[i][0] = book.getCustomer().getId();
+					data[i][1] = book.getCustomer().getName();
+					data[i][2] = book.getFlight().getFlightNumber();
+					data[i][3] = book.getPrice();
+					data[i][4] = book.getBookingDate();
+					data[i][5] = cancelPayment;
 				}
 			}
 
@@ -517,7 +577,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		this.getContentPane().removeAll();
 		this.getContentPane().add(new JScrollPane(table));
 		this.revalidate();
-		
+
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				deleteSelectRow = table.rowAtPoint(e.getPoint());

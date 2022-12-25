@@ -18,8 +18,8 @@ public class RemoveCustomer implements Command, DataManager  {
 	
 	public final String RESOURCE = "./resources/data/customers.txt";
 	
-	public RemoveCustomer(FlightBookingSystem fbs , int row) throws IOException, FlightBookingSystemException {
-		deleteCustomer(fbs , row);
+	public RemoveCustomer(FlightBookingSystem fbs , String customerId) throws IOException, FlightBookingSystemException {
+		deleteCustomer(fbs , customerId);
 	}
 
 	@Override
@@ -40,24 +40,14 @@ public class RemoveCustomer implements Command, DataManager  {
 		
 	}
 	
-	public void deleteCustomer(FlightBookingSystem flightBookingSystem , int id) throws IOException, FlightBookingSystemException {
+	public void deleteCustomer(FlightBookingSystem flightBookingSystem , String customerId) throws IOException, FlightBookingSystemException {
 		
-		flightBookingSystem.getCustomerByID(id).setIsDeleted(true);
+		flightBookingSystem.getCustomerByPhone(customerId).setIsDeleted(true);
 		List<Customer> customers = flightBookingSystem.getCustomers();
 		
 		try (PrintWriter out = new PrintWriter(new FileWriter(RESOURCE))) {
 			int temp_id = 1;
 
-            
-//            for(Map.Entry<Integer, Customer> entry:customers.entrySet()) {
-//            	out.print(temp_id+SEPARATOR);
-//                out.print(entry.getValue().getName() + SEPARATOR);
-//                out.print(entry.getValue().getPhone() + SEPARATOR);
-//                out.print(entry.getValue().getEmail() + SEPARATOR);
-//                out.print("\n");
-//                temp_id++;
-//			}
-			
 			for(Customer customer:customers) {
 				out.print(temp_id+SEPARATOR);
                 out.print(customer.getName() + SEPARATOR);

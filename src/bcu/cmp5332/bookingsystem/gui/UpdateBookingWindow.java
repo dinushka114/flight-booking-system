@@ -78,26 +78,15 @@ public class UpdateBookingWindow extends JFrame implements ActionListener {
 		int flightNoText = Integer.parseInt(flightId.getText());
 		
 		Booking book = mw.getFlightBookingSystem().getBookingById(this.bookingId);
-//		System.out.println(book.getCustomer().getName());
-		
-		
-		
-//
+
 		LocalDate currentDate = new FlightBookingSystem().getSystemDate();
-//
-		float actualPrice = 0, cancelPayment = 0;
-//
+		float actualPrice = book.getPrice(), cancelPayment = 0;
 		Flight flight = mw.getFlightBookingSystem().getFlightByID(flightNoText);
 		
-//
 		int days = Period.between(currentDate, flight.getDepartureDate()).getDays();
-//
-		for (Booking booking : book.getCustomer().getBookings()) {
-			if (booking.getCustomer().getId() == book.getCustomer().getId() && booking.getFlight().getId() == flightNoText) {
-				actualPrice = book.getPrice();
-			}
-		}
-//
+		
+		
+
 		if (days < 3) {
 			cancelPayment = (float) (actualPrice * 0.5);
 		} else if (days < 6) {
@@ -110,6 +99,7 @@ public class UpdateBookingWindow extends JFrame implements ActionListener {
 			cancelPayment = (float) (actualPrice * 0.1);
 		}
 
+		
 		Command updateBooking = new UpdateBooking(mw.getFlightBookingSystem(), book, flight);
 		updateBooking.execute(mw.getFlightBookingSystem());
 		JOptionPane.showMessageDialog(this,
